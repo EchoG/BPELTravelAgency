@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:car="http://org.ow2.petals/demo/travelagency/car/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+	xmlns:tns="http://org.ow2.petals/demo/travelagency/agency/Artifacts"
+	xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop" 
+	xmlns:wsdl="http://org.ow2.petals/demo/travelagency/airline/"
+	xmlns:wsdl1="http://org.ow2.petals/demo/travelagency/hotel/"
+	xmlns:wsdl2="http://org.ow2.petals/demo/travelagency/agency/"
+	xmlns:wsdl3="http://org.ow2.petals/demo/travelagency/car/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="travelagencyArtifacts"
+	targetNamespace="http://org.ow2.petals/demo/travelagency/agency/Artifacts">
+	<plnk:partnerLinkType name="airlineLT">
+		<plnk:role name="airlineRole" portType="wsdl:AirLineBook" />
+	</plnk:partnerLinkType>
+	<plnk:partnerLinkType name="hotelLT">
+		<plnk:role name="hotelRole" portType="wsdl1:hotel" />
+	</plnk:partnerLinkType>
+	<plnk:partnerLinkType name="carLT">
+		<plnk:role name="carRole" portType="wsdl3:car" />
+	</plnk:partnerLinkType>
+	
+	<import location="airline/AirLineBookService.wsdl"
+		namespace="http://org.ow2.petals/demo/travelagency/airline/" />
+	<import location="hotel/hotel.wsdl"
+		namespace="http://org.ow2.petals/demo/travelagency/hotel/" />
+	<import location="travelagency.wsdl"
+		namespace="http://org.ow2.petals/demo/travelagency/agency/" />
+	<import location="car/car.wsdl" namespace="http://org.ow2.petals/demo/travelagency/car/" />
+</definitions>

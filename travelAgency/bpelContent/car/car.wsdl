@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:sawsdl10="http://www.w3.org/ns/sawsdl"
+	xmlns:tns="http://org.ow2.petals/demo/travelagency/car/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="car"
+	targetNamespace="http://org.ow2.petals/demo/travelagency/car/">
+	<wsdl:types>
+		<xsd:schema elementFormDefault="qualified"
+			targetNamespace="http://org.ow2.petals/demo/travelagency/car/">
+			<xsd:element name="bookCar">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="lastname" type="xsd:string" />
+						<xsd:element name="firstname" type="xsd:string" />
+						<xsd:element name="address" type="xsd:string" />
+						<xsd:element name="start" type="xsd:dateTime" />
+						<xsd:element name="end" type="xsd:dateTime" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="bookCarResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="out" type="xsd:boolean" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="bookCarRequest">
+		<wsdl:part element="tns:bookCar" name="parameters" />
+	</wsdl:message>
+	<wsdl:message name="bookCarResponse">
+		<wsdl:part element="tns:bookCarResponse" name="parameters" />
+	</wsdl:message>
+	<wsdl:portType name="car">
+		<jaxws:bindings xmlns:jaxws="http://java.sun.com/xml/ns/jaxws">
+			<jaxws:enableWrapperStyle>false</jaxws:enableWrapperStyle>
+		</jaxws:bindings>
+		<wsdl:operation name="bookCar">
+			<wsdl:input message="tns:bookCarRequest" />
+			<wsdl:output message="tns:bookCarResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="carSOAP" type="tns:car">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="bookCar">
+			<soap:operation
+				soapAction="http://www.example.org/car/NewOperation" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="carService">
+		<sawsdl10:attrExtensions
+			sawsdl10:modelReference="http://www.petalslink.org/wsoui/image#classpath://car/car.jpg 
+			 http://www.petalslink.org/wsoui/position#NE" />
+		<wsdl:port binding="tns:carSOAP" name="carSOAP">
+			<soap:address location="http://localhost:8211/Car" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

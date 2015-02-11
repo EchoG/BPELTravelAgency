@@ -1,0 +1,107 @@
+<bpel:process name="travelagency" targetNamespace="http://org.ow2.petals/demo/travelagency/agency/"
+	xmlns:hotc="http://www.example.org/processHotelConfirmation/"
+	suppressJoinFailure="yes" xmlns:tns="http://org.ow2.petals/demo/travelagency/agency/"
+	xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+	xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+	xmlns:ns1="http://org.ow2.petals/demo/travelagency/agency/Artifacts"
+	xmlns:ns="http://org.ow2.petals/demo/travelagency/airline/" 
+	xmlns:ns0="http://org.ow2.petals/demo/travelagency/hotel/"
+	xmlns:car="http://org.ow2.petals/demo/travelagency/car/" 
+	xmlns:ns2="http://www.w3.org/2001/XMLSchema">
+
+	<!-- Import the client WSDL -->
+	<bpel:import namespace="http://org.ow2.petals/demo/travelagency/agency/Artifacts"
+		location="travelagencyArtifacts.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" />
+	
+
+	<bpel:import location="airline/AirLineBookService.wsdl"
+		namespace="http://org.ow2.petals/demo/travelagency/airline/"
+		importType="http://schemas.xmlsoap.org/wsdl/" />
+	<bpel:import location="hotel/hotel.wsdl"
+		namespace="http://org.ow2.petals/demo/travelagency/hotel/" 
+		importType="http://schemas.xmlsoap.org/wsdl/" />
+	<bpel:import location="travelagency.wsdl"
+		namespace="http://org.ow2.petals/demo/travelagency/agency/"
+		importType="http://schemas.xmlsoap.org/wsdl/" />
+	<bpel:import location="car/car.wsdl" 
+		namespace="http://org.ow2.petals/demo/travelagency/car/"
+		importType="http://schemas.xmlsoap.org/wsdl/" />
+
+	<!-- ================================================================= -->
+	<!-- PARTNERLINKS -->
+	<!-- List of services participating in this BPEL process -->
+	<!-- ================================================================= -->
+	<bpel:partnerLinks>
+		<!-- The 'client' role represents the requester of this service. -->
+		<bpel:partnerLink name="client" partnerLinkType="tns:travelAgency"
+			myRole="travelAgencyProvider" />
+		<bpel:partnerLink name="airlinepartner"
+			partnerLinkType="ns1:airlineLT" partnerRole="airlineRole"></bpel:partnerLink>
+		<bpel:partnerLink name="hotelpartner"
+			partnerLinkType="ns1:hotelLT" partnerRole="hotelRole"></bpel:partnerLink>
+		<bpel:partnerLink name="carpartner" 
+			partnerLinkType="ns1:carLT" partnerRole="carRole"></bpel:partnerLink>
+	</bpel:partnerLinks>
+
+	<!-- ================================================================= -->
+	<!-- VARIABLES -->
+	<!-- List of messages and XML documents used within this BPEL process -->
+	<!-- ================================================================= -->
+	<bpel:variables>
+		<!-- Reference to the message passed as input during initiation -->
+		<bpel:variable name="input" messageType="tns:travelAgencyRequestMessage" />
+
+		<!-- Reference to the message that will be returned to the requester -->
+		<bpel:variable name="output" messageType="tns:travelAgencyResponseMessage" />
+		<bpel:variable name="airlinepartnerResponse" messageType="ns:bookFlightResponse" />
+		<bpel:variable name="airlinepartnerRequest"  messageType="ns:bookFlightRequest" />
+		<bpel:variable name="hotelpartnerRequest"    messageType="ns0:bookRoomRequest" />
+		<bpel:variable name="hotelpartnerResponse"	 messageType="ns0:bookRoomResponse" />
+		<bpel:variable name="carpartnerResponse"     messageType="car:bookCarResponse" />
+		<bpel:variable name="carpartnerRequest"      messageType="car:bookCarRequest" />
+	</bpel:variables>
+
+	<!-- ================================================================= -->
+	<!-- ORCHESTRATION LOGIC -->
+	<!-- Set of activities coordinating the flow of messages across the -->
+	<!-- services integrated within this business process -->
+	<!-- ================================================================= -->
+	<bpel:sequence name="main">
+
+		<!-- Receive input from requester. Note: This maps to operation defined 
+			in processName.wsdl -->
+		<bpel:receive name="receiveInput" partnerLink="client" portType="tns:travelAgency"
+			operation="bookTravel" createInstance="yes" />
+
+		<bpel:flow name="Flow">
+
+			<bpel:sequence name='hotelSequence'>
+
+				
+                
+                <bpel:invoke name="InvokeHotel" partnerLink="hotelpartner"
+					operation="bookRoom" inputVariable="hotelpartnerRequest" outputVariable="hotelpartnerResponse" portType="ns0:hotel">
+				</bpel:invoke>
+			</bpel:sequence>
+
+			<bpel:sequence name="carSequence">
+				
+				<bpel:invoke name="InvokeCar" partnerLink="carpartner"
+					operation="bookCar" portType="car:car" inputVariable="carpartnerRequest"
+					outputVariable="carpartnerResponse"></bpel:invoke>
+			</bpel:sequence>
+            <bpel:sequence name="airlineSequence">
+				<bpel:invoke name="InvokeAirline" partnerLink="airlinepartner" operation="bookFlight" portType="ns:AirLineBook" inputVariable="airlinepartnerRequest" outputVariable="airlinepartnerResponse"></bpel:invoke>
+			
+                </bpel:sequence>
+        </bpel:flow>
+
+		
+
+
+		<!-- Generate reply to synchronous request -->
+		<bpel:reply name="replyOutput" partnerLink="client" portType="tns:travelAgency"
+			operation="bookTravel" variable="output" />
+	</bpel:sequence>
+</bpel:process>
+

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:sawsdl10="http://www.w3.org/ns/sawsdl"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://org.ow2.petals/demo/travelagency/hotel/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="hotel"
+	targetNamespace="http://org.ow2.petals/demo/travelagency/hotel/">
+	<wsdl:types>
+		<xsd:schema elementFormDefault="qualified" targetNamespace="http://org.ow2.petals/demo/travelagency/hotel/">
+			<xsd:element name="bookRoom">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="lastname" type="xsd:string" />
+						<xsd:element name="firstname" type="xsd:string" />
+						<xsd:element name="address" type="xsd:string" />
+						<xsd:element name="date" type="xsd:dateTime" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="bookRoomResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="out" type="xsd:boolean"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="bookRoomRequest">
+		<wsdl:part name="parameters" element="tns:bookRoom" />
+	</wsdl:message>
+
+	<wsdl:message name="bookRoomResponse">
+		<wsdl:part name="parameters" element="tns:bookRoomResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="hotel">
+		<jaxws:bindings xmlns:jaxws="http://java.sun.com/xml/ns/jaxws">
+			<jaxws:enableWrapperStyle>false</jaxws:enableWrapperStyle>
+		</jaxws:bindings>
+
+		<wsdl:operation name="bookRoom">
+			<wsdl:input message="tns:bookRoomRequest" />
+			<wsdl:output message="tns:bookRoomResponse"></wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="hotelSOAP" type="tns:hotel">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="bookRoom">
+			<soap:operation
+				soapAction="http://org.ow2.petals/demo/travelagency/hotel/bookRoom" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="hotel">
+		<sawsdl10:attrExtensions
+			sawsdl10:modelReference="http://www.petalslink.org/wsoui/image#classpath://hotel/hotel.jpg 
+			 http://www.petalslink.org/wsoui/position#SE" />
+		<wsdl:port binding="tns:hotelSOAP" name="hotelSOAP">
+			<soap:address location="http://localhost:3456/Hotel" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
+
